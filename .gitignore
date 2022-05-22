@@ -1,3 +1,5 @@
+# created by virtualenv automatically
+#*
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -26,6 +28,12 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# virtenv
+bin/
+lib/
+pyvenv.cfg
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
