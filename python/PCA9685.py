@@ -2,6 +2,9 @@
 # ============================================================================
 # Most code from Adafruit PCA9685 16-Channel PWM Servo Driver, 
 # with thanks to the author
+# And modified for driving LEDs ZJG 2022-05-22
+# taken from here: http://www.python-exemplary.com/drucken.php?inhalt_mitte=raspi/en/servomotors.inc.php
+# And also with thanks to the accumulated authors
 # ============================================================================
 
 import time
@@ -30,7 +33,7 @@ class PWM:
         '''
         prescaleValue = 25000000.0    # 25MHz
         prescaleValue /= 4096.0       # 12-bit
-        prescaleValue /= float(freq)
+        prescaleValue /= float(freq)  # set to the requested frequency
         prescaleValue -= 1.0
         prescale = math.floor(prescaleValue + 0.5)
         oldmode = self._readByte(self._mode_adr)
@@ -47,22 +50,29 @@ class PWM:
         '''
         Sets a single PWM channel. The value is stored in the device.
         @param channel: one of the channels 0..15
-        @param duty: the duty cycle 0..100
+        @param duty: the duty cycle float between 0..1
         '''
-        data = int(duty * 4996 / 100) # 0..4096 (included)
+        if duty < 0 or duty > 1.0:
+            raise ValueError("duty must be float between 0 and 1")
+        
+        data = int(duty * 4095.0) # 0..4096 (included)
+        
+        #import pdb;pdb.set_trace()
+        
         self._writeByte(self._base_adr_low + 4 * channel, data & 0xFF)
         self._writeByte(self._base_adr_high + 4 * channel, data >> 8)
+        time.sleep(0.005)
 
     def _writeByte(self, reg, value):
         try:
             self.bus.write_byte_data(self.address, reg, value)
         except:
-            print "Error while writing to I2C device"
+            print("Error while writing to I2C device")
 
     def _readByte(self, reg):
         try:
             result = self.bus.read_byte_data(self.address, reg)
             return result
         except:
-            print "Error while reading from I2C device"
+            print("Error while reading from I2C device")
             return None
