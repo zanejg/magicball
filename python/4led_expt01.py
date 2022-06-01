@@ -15,9 +15,9 @@ from PCA9685 import PWM
 # }
 channels = [
 {
-    "RED" : 2,
+    "RED" : 0,
     "GREEN" : 1,
-    "BLUE" : 0,
+    "BLUE" : 2,
 },
 {
     "RED" : 5,

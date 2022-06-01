@@ -17,3 +17,24 @@ difference(){
 }
 
 
+module catch(){
+    rotate(45,[1,0,0]){
+        rotate(90,[0,1,0]){
+            cube([3,3,5]);
+        }
+    }
+}
+
+translate([10,(OUTER_WIDTH/2)-3,(OUTER_WIDTH/4)-3]){
+    catch();
+}
+translate([-10-2.5,(OUTER_WIDTH/2)-3,(OUTER_WIDTH/4)-3]){
+    catch();
+}
+
+translate([10,(-OUTER_WIDTH/2)-1.5,(OUTER_WIDTH/4)-3]){
+    catch();
+}
+translate([-10-2.5,(-OUTER_WIDTH/2)-1.5,(OUTER_WIDTH/4)-3]){
+    catch();
+}

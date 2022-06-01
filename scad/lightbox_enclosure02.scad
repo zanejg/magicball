@@ -19,3 +19,16 @@ difference(){
 
 }
 
+
+module catch(){
+    rotate(45,[1,0,0]){
+        cube([30,3,3],center=true);
+    }
+}
+
+translate([0,(OUTER_WIDTH/2)-1.5,-3]){
+    catch();
+}
+translate([0,(-OUTER_WIDTH/2)+1.5,-3]){
+    catch();
+}
