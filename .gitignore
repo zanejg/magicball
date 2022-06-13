@@ -138,5 +138,5 @@ dmypy.json
 
 # Magic ball proj
 remote
-
+*.gcode
 
