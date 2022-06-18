@@ -1,11 +1,19 @@
+include <Round-Anything/polyround.scad>
 
-$fn=50;
-LEG_WD = 15;
-LEG_LN  = 100;
-LEG_TN = 2;
-HOLE_DISTANCE = 121;
+$fn=60;
+
+MAIN_TN=2.5;
+BRD_WD=90;
+BRD_TN=2.4;
+PYLON_HT=80;
+CLAMP_LN=10;
+FILLET=6;
+LED_FOOT_WD=20;
+FLAT_WD=10;
+
 FRAME_SZ = 50;
 BRACE_LN=15;
+LEG_TN=2;
 
 
 
@@ -87,103 +95,50 @@ module light_mount_frame(){
 }
 
 
-module brace(){
-    // Filleted buttresses
 
-    difference(){
-        cube([BRACE_LN,LEG_TN,BRACE_LN],center=true);
 
-        translate([-BRACE_LN/2-LEG_TN,0,BRACE_LN/2]){
-            rotate(90,[1,0,0]){
-                cylinder(h=LEG_TN*2,r=(BRACE_LN),center=true);
-            }
+
+pylon_points = [
+    [0,0,0],
+    [-CLAMP_LN-MAIN_TN, 0,0],
+    [-CLAMP_LN-MAIN_TN, BRD_TN+(2*MAIN_TN), 0],
+    [(BRD_WD/2)-CLAMP_LN-MAIN_TN, BRD_TN+(2*MAIN_TN), FILLET],
+    [(BRD_WD/2)-CLAMP_LN-MAIN_TN, BRD_TN+(2*MAIN_TN)+PYLON_HT, FILLET],
+    [(BRD_WD/2)-CLAMP_LN-MAIN_TN-(LED_FOOT_WD/2), BRD_TN+(2*MAIN_TN)+PYLON_HT,0],
+    [(BRD_WD/2)-CLAMP_LN-MAIN_TN-(LED_FOOT_WD/2), BRD_TN+(3*MAIN_TN)+PYLON_HT,0],
+    [(BRD_WD/2)-CLAMP_LN+(LED_FOOT_WD/2), BRD_TN+(3*MAIN_TN)+PYLON_HT,0],
+    [(BRD_WD/2)-CLAMP_LN+(LED_FOOT_WD/2), BRD_TN+(2*MAIN_TN)+PYLON_HT,0],
+    [(BRD_WD/2)-CLAMP_LN, BRD_TN+(2*MAIN_TN)+PYLON_HT, FILLET],
+    [(BRD_WD/2)-CLAMP_LN, BRD_TN+(MAIN_TN),0],
+    [-CLAMP_LN, BRD_TN+MAIN_TN,0],
+    [-CLAMP_LN,MAIN_TN,0],
+    [0,MAIN_TN,0],
+];
+
+difference(){
+    union(){
+        linear_extrude(height=FLAT_WD){
+            polygon(polyRound(pylon_points,$fn));
+        }
+        translate([(BRD_WD/2)-CLAMP_LN-(2*MAIN_TN),PYLON_HT/2+(2*MAIN_TN)+BRD_TN,MAIN_TN/2]){
+            cube([2*MAIN_TN,PYLON_HT,MAIN_TN],center=true);
+        }
+
+        translate([(BRD_WD/2)-CLAMP_LN-(MAIN_TN*2), (3*MAIN_TN)+BRD_TN+FILLET, FLAT_WD/2]){
+            cube([3*MAIN_TN,8,FLAT_WD],center=true);
         }
     }
-
-}
-
-
-module leg(leg_len){
-    
-    difference(){
-        // main body of leg
-        translate([0,-LEG_WD/2,0]){
-            cube([leg_len ,LEG_WD,LEG_TN]);
-        }
-        // holes for cable tie
-        translate([leg_len -(LEG_TN*3),0,LEG_TN/2]){
-            cube([3,5,LEG_TN*2],center=true);
-        }
-        translate([leg_len -(LEG_TN*5),0,LEG_TN/2]){
-            cube([3,5,LEG_TN*2],center=true);
-        }
-    }
-
-    // longitudinal ribs
-    translate([0,-LEG_WD/3,0]){
-        cube([leg_len ,LEG_TN,LEG_TN*2]);
-    }
-    translate([0,LEG_WD/3-LEG_TN,0]){
-        cube([leg_len ,LEG_TN,LEG_TN*2]);
-    }
-    
-    // frame on the end to put the lights
-    translate([leg_len ,0,FRAME_SZ/2]){
+    #translate([(BRD_WD/2)-CLAMP_LN-(MAIN_TN*2),(3*MAIN_TN)+BRD_TN+FILLET,FLAT_WD/2]){
         rotate(90,[0,1,0]){
+            cylinder(h=12,r=4.2/2,center=true);
+        }
+    }
+}
+translate([(BRD_WD/2)-CLAMP_LN,BRD_TN+(3*MAIN_TN)+PYLON_HT,FRAME_SZ/2]){
+    rotate(-90,[1,0,0]){
+        rotate(90,[0,0,1]){
             light_mount_frame();
         }
     }
-
-    // braces for strength
-    translate([leg_len -(BRACE_LN/2),FRAME_SZ/6,BRACE_LN/2]){
-        brace();
-    }
-    translate([leg_len -(BRACE_LN/2),-FRAME_SZ/6,BRACE_LN/2]){
-        brace();
-    }
-
-    
-
-
-
 }
-
-module hole_standoff(){
-        cylinder(h=2*LEG_TN,r=5);
-}
-
-module hole(){
-    cylinder(h=2.1*LEG_TN,r=3.2/2);
-}
-
-difference(){
-    // holes for screws
-    xval = ((HOLE_DISTANCE/2)*sin(30))/cos(30);
-    
-    union(){
-        leg(LEG_LN*(2/3));
-        rotate(120,[0,0,1]){
-            leg(LEG_LN);
-        }
-
-        rotate(240,[0,0,1]){
-            leg(LEG_LN);
-        }
-    
-        translate([-xval,HOLE_DISTANCE/2,0]){
-            hole_standoff();
-        }
-        translate([-xval,-HOLE_DISTANCE/2,0]){
-            hole_standoff();
-        }
-    }
-    translate([-xval,HOLE_DISTANCE/2,-0.1]){
-        hole();
-    }
-    translate([-xval,-HOLE_DISTANCE/2,-0.1]){
-        hole();
-    }
-}
-translate([0,-LEG_WD/2,0])
-cube([LEG_WD/2,LEG_WD,7]);
 

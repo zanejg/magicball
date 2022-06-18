@@ -48,6 +48,8 @@ class LED_driver(object):
         self.pwm = PWM(self.bus, self.i2c_address)
         self.pwm.setFreq(self.fPWM)
         self.channels = channels
+        self.dim_seq = None
+        self.dim_posi = None
     
     def set_led(self,colour,duty):
         self.pwm.setDuty(self.channels[colour], duty)
@@ -73,7 +75,54 @@ class LED_driver(object):
         # import pdb;pdb.set_trace()
         for col,val in the_levels.items():
             self.set_led(col,val)
+        seq_data = get_colour_dimming_sequence(the_RGB)
+        self.dim_seq = seq_data['sequences']
+        self.dim_posi = seq_data['position']
+    
+    def get_posi_duties(self):
+        return {
+            "RED": self.dim_seq['RED'][self.dim_posi],
+            "GREEN":self.dim_seq['GREEN'][self.dim_posi] ,
+            "BLUE":self.dim_seq['BLUE'][self.dim_posi]
             
+        }
+    
+    def dim(self,step_size =1):
+        #print(f"posi={self.dim_posi}")
+        if self.dim_posi is None:
+            return
+        self.dim_posi-=step_size
+        if self.dim_posi < 0:
+            self.dim_posi =0
+        
+        #self.light_with_floats(self.dim_seq[self.dim_posi],reset_seq=False)
+        self.light_with_floats(self.get_posi_duties(),reset_seq=False)
+        
+    def brighten(self,step_size =1):
+        #print(f"posi={self.dim_posi}")
+        
+        if self.dim_posi is None:
+            return 
+        
+        #import pdb;pdb.set_trace()
+        self.dim_posi+=step_size
+        seqlen = len(self.dim_seq['RED'])
+        if not (self.dim_posi < seqlen):
+            self.dim_posi = seqlen -1
+            
+        self.light_with_floats(self.get_posi_duties() ,reset_seq=False)
+        
+    
+    def light_with_floats(self,duties,reset_seq=True):
+        """
+        takes a dict of floats keyed by colour
+        """
+        for col,duty in duties.items():
+                self.set_led(col,duty)
+        if(reset_seq):
+            self.dim_seq = None
+            self.dim_posi = None
+        
     
     
     
@@ -100,11 +149,21 @@ class four_LED_driver(object):
         
     def set_each(self,the_leds):
         """
-        Takes a list of dicts keyed by colour
+        Takes a list of dicts each keyed by colour
         """
         for lednum,this_led in enumerate(the_leds):
-            for col,duty in this_led.items():
-                self.LEDs[lednum].set_led(col,duty)
+            self.LEDs[lednum].light_with_floats(this_led)
+            # for col,duty in this_led.items():
+            #     self.LEDs[lednum].set_led(col,duty)
+            
+    def set_each_RGB(self,the_leds):
+        """
+        Takes a list of RGBs
+        Will also create the dimming sequences for each and
+        set them up
+        """
+        for lednum,this_RGB in enumerate(the_leds):
+            self.LEDs[lednum].light_with_RGB(this_RGB)
             
 
 
@@ -150,13 +209,14 @@ def rgb_to_ints(rgb):
 
 
 
-full_dimming_seq = create_full_dimming_sequence()
+
 def get_colour_dimming_sequence(rgbstr):
     """
     Will return a list of 64 steps of dimming or brightening 
     a specific RGB colour along with the position in the sequence that
     the given RGB value is in that sequence.
     """
+    full_dimming_seq = create_full_dimming_sequence()
     
     # first we need the values as integers
     levels = rgb_to_ints(rgbstr)
@@ -176,7 +236,7 @@ def get_colour_dimming_sequence(rgbstr):
     # now find what proportion of the full power the max level is
     full = 255.0
     # the coefficient that will get the max level to full
-    full_max_coeff = ((full - max_level) + max_level) / max_level
+    full_max_coeff = ((full - max_level) + max_level) / max_level if max_level else 0
     # we will need this to find where we are
     max_fraction = max_level/full
     low = full_dimming_seq[0]
@@ -185,8 +245,11 @@ def get_colour_dimming_sequence(rgbstr):
     dim_seq_len = len(full_dimming_seq)
     # we want a relatively big step for our rotary switch control
     # so we will split the seq up into 64
-    step_size = int(dim_seq_len/64)
+    stepnum = 64
+    step_size = int(dim_seq_len/(stepnum-1)) # we will only calc 1st 63
     stepped_dimming_seq = [full_dimming_seq[i] for i in range(0,dim_seq_len,step_size)]
+    # then ensure 1.0 is on the end
+    stepped_dimming_seq.append(1.0)
     # now find our position in it
     for posi,i in enumerate(stepped_dimming_seq):
         if max_fraction <= i:
@@ -194,7 +257,7 @@ def get_colour_dimming_sequence(rgbstr):
     position = posi
     # we need the ratios of the colours to stay the same over the range
     # so we will store the ration of the lesser ones to the max value
-    lesser_ratios = {col:val/max_level for col,val in lesser_levels.items()}
+    lesser_ratios = {col:(val/max_level if max_level else 0) for col,val in lesser_levels.items()}
     
     # now we can build the sequence as 3 lists of values keyed by colour
     # the max colour will be the same as the stepped_dimming_seq
@@ -208,9 +271,11 @@ def get_colour_dimming_sequence(rgbstr):
     # and a position for the given RGB colour in the dimming sequence
     return {
         "position":position,
-        max_col:stepped_dimming_seq,
-        lesser_cols[0]:lesser_col0,
-        lesser_cols[1]:lesser_col1,
+        "sequences": {
+            max_col:stepped_dimming_seq,
+            lesser_cols[0]:lesser_col0,
+            lesser_cols[1]:lesser_col1,
+        },
     }
 
 

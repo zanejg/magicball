@@ -5,30 +5,30 @@ import time
 import LED_control as LC
 import random
 
+from hardware import channels
 
-
-channels = [
-{
-    "RED" : 0,
-    "GREEN" : 1,
-    "BLUE" : 2,
-},
-{
-    "RED" : 5,
-    "GREEN" : 4,
-    "BLUE" : 3,
-},
-{
-    "RED" : 8,
-    "GREEN" : 7,
-    "BLUE" : 6,
-},
-{
-    "RED" : 11,
-    "GREEN" : 10,
-    "BLUE" : 9,
-},
-]
+# channels = [
+# {
+#     "RED" : 0,
+#     "GREEN" : 1,
+#     "BLUE" : 2,
+# },
+# {
+#     "RED" : 5,
+#     "GREEN" : 4,
+#     "BLUE" : 3,
+# },
+# {
+#     "RED" : 8,
+#     "GREEN" : 7,
+#     "BLUE" : 6,
+# },
+# {
+#     "RED" : 11,
+#     "GREEN" : 10,
+#     "BLUE" : 9,
+# },
+# ]
 
 
 
@@ -70,10 +70,11 @@ if __name__ == "__main__":
                     if check_hex(col):
                         fld.all_same_RGB(col)
                         
-                        seq = LC.get_colour_dimming_sequence(col)
-                        print(seq.keys())
+                        seqdata = LC.get_colour_dimming_sequence(col)
+                        print(seqdata.keys())
                         
-                        posi = seq["position"]
+                        posi = seqdata["position"]
+                        seq = seqdata['sequences']
                         slen = len(seq['RED'])
                         direction = "up"
                         while(True):
