@@ -50,6 +50,7 @@ class LED_driver(object):
         self.channels = channels
         self.dim_seq = None
         self.dim_posi = None
+        self.levels = {}
     
     def set_led(self,colour,duty):
         self.pwm.setDuty(self.channels[colour], duty)
@@ -64,9 +65,12 @@ class LED_driver(object):
     def rgb_to_levels(self,rgb):
         
         levels = {
-        "RED" :  self.hex_to_level(rgb[0:2]),
-        "GREEN": self.hex_to_level(rgb[2:4]),
-        "BLUE" : self.hex_to_level(rgb[4:6]),
+        "RED" :  {'level':self.hex_to_level(rgb[0:2]),
+                  'hex':rgb[0:2]},
+        "GREEN": {'level':self.hex_to_level(rgb[2:4]),
+                  'hex':rgb[2:4]},
+        "BLUE" : {'level':self.hex_to_level(rgb[4:6]),
+                  'hex':rgb[4:6]},
         }
         return levels
 
@@ -74,10 +78,12 @@ class LED_driver(object):
         the_levels = self.rgb_to_levels(the_RGB)
         # import pdb;pdb.set_trace()
         for col,val in the_levels.items():
-            self.set_led(col,val)
+            self.set_led(col,val['level'])
+        
         seq_data = get_colour_dimming_sequence(the_RGB)
         self.dim_seq = seq_data['sequences']
         self.dim_posi = seq_data['position']
+        self.levels = the_levels
     
     def get_posi_duties(self):
         return {
@@ -155,7 +161,33 @@ class four_LED_driver(object):
             self.LEDs[lednum].light_with_floats(this_led)
             # for col,duty in this_led.items():
             #     self.LEDs[lednum].set_led(col,duty)
+    
+    def step_one_colour(self, colour,direction):
+        """
+        Brighten or dim one colour on all the LEDs 
+        by 32 out of 256 = 256/8
+        direction = "dim" or "brighten"
+        """
+        step_size = 32
+        dir_coeff = -1 if direction=="dim" else 1
+        
+        for this_led in self.LEDs:
+            the_RGB = ""
+            #import pdb;pdb.set_trace()
+            for this_col in ['RED','GREEN','BLUE']:
+                if this_col == colour:
+                    current_col = int(this_led.levels[colour]['hex'],16)
+                    new_col = current_col + (step_size * dir_coeff)
+                    the_RGB += hex(new_col)[2:]
+                else:
+                    the_RGB += this_led.levels[colour]['hex']
             
+        self.all_same_RGB(the_RGB)
+            
+            
+            
+        
+         
     def set_each_RGB(self,the_leds):
         """
         Takes a list of RGBs

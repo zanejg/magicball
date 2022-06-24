@@ -13,11 +13,30 @@ class event_finder():
         # the threshhold to trigger pulses on
         self.threshhold = threshhold
         # what direction our signal is running in rising/lowering
-        self.dirmov = None
+        self.dirmov = ""
         # keep track of pulses to look for cycles
-        self.pulse_state = None
+        self.pulse_state = ""
         # major events esp cycles
-        self.events = []
+        self.events = [{'time':dt.datetime.strptime("1 January, 2000", "%d %B, %Y")}]
+    def trim_events(self):
+        """
+        We need to ensure that as the events rack up they
+        will not get too huge
+        """
+        # we will just hard code the max size
+        max_size = 200
+        over_len = len(self.events) - max_size
+        if over_len > 0:
+            # lop off the events at the beginning
+            self.events = self.events[over_len:]
+        # and the same for the subevents
+        sub_max_size = 300
+        subover_len = len(self.subevents) - sub_max_size
+        if subover_len > 0:
+            # lop off the events at the beginning
+            self.subevents = self.subevents[subover_len:]
+        
+        
         
     def get_events(self,pulse_event):
         """
@@ -53,6 +72,8 @@ class event_finder():
                                 else "rev_cycle"
                         self.events.append({"event":this_event,
                                             "time":pulse_event['time']})
+        # clean up
+        self.trim_events()
             
         
 
@@ -105,3 +126,4 @@ class event_finder():
             self.state = "flat"
 
         self.last_val = this_val
+        
