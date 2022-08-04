@@ -73,6 +73,7 @@ while(True):
         current_event_num = int(current_event)
         ten_start = 1 if current_event_num < 10 else current_event_num-9
         last_ten = []
+        
         for cc in range(ten_start,current_event_num+1):
             last_ten.append(client.get(f"ev{cc}"))
         #import pdb;pdb.set_trace()
@@ -85,7 +86,7 @@ while(True):
                 if ev['event']=="fwd_cycle":
                     dirn = "brighten"  
                     leds.step_one_colour(dm2col[dm],dirn)
-                elif ev['event']=="fwd_cycle":
+                elif ev['event']=="rev_cycle":
                     dirn = "dim"
                     leds.step_one_colour(dm2col[dm],dirn)
             

@@ -58,7 +58,7 @@ class LED_driver(object):
 
     def hex_to_level(self,hex):
         if(len(hex) != 2):
-            raise ValueError("Hex value is not 2 digits")
+            raise ValueError(f"Hex value |{hex}| is not 2 digits")
         the_int = int(hex,16)
         return float(the_int/255.0) 
     
@@ -171,18 +171,31 @@ class four_LED_driver(object):
         step_size = 32
         dir_coeff = -1 if direction=="dim" else 1
         
+        rgb_list = []
         for this_led in self.LEDs:
             the_RGB = ""
             #import pdb;pdb.set_trace()
             for this_col in ['RED','GREEN','BLUE']:
                 if this_col == colour:
-                    current_col = int(this_led.levels[colour]['hex'],16)
+                    current_col = int(this_led.levels[this_col]['hex'],16)
+                    if (dir_coeff == -1 and current_col == 0 or
+                        dir_coeff == 1 and current_col > 233):
+                        # set the travel limits
+                        dir_coeff =0
+                    
                     new_col = current_col + (step_size * dir_coeff)
-                    the_RGB += hex(new_col)[2:]
+                    the_RGB += "00" if new_col < 19 else hex(new_col)[2:]
                 else:
-                    the_RGB += this_led.levels[colour]['hex']
+                    the_RGB += this_led.levels[this_col]['hex']
             
-        self.all_same_RGB(the_RGB)
+            rgb_list.append(the_RGB)
+            
+        #import pdb;pdb.set_trace()
+        self.set_each_RGB(rgb_list)
+            
+            
+            
+        
             
             
             
