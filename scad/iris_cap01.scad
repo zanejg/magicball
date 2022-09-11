@@ -1,13 +1,14 @@
-
+$fn=100;
+//$fs=2;
+//$fa=2;
 // facet stuff
 RND_FACET_RAD = 118;
 RAD = 100;
-WID = 10;
 THK = 1.5;
 
 CENTER_HT= 60;
 
-OUTER_WALL_TN = 2;
+OUTER_WALL_TN = 1;
 
 IRIS_INNER_RAD = 10;
 IRIS_OUTER_RAD = 80;
@@ -203,8 +204,11 @@ module iris(){
                             cylinder(h=CENTER_HT*1.1,r=IRIS_INNER_RAD-1.5);
                         }
                     }
+                    
+                    // central dot
+                    cylinder(h=CENTER_HT,r=IRIS_INNER_RAD*(1/5));
+                    
 
-                    cylinder(h=CENTER_HT,r=IRIS_INNER_RAD*(1/6));
 
                     //###############################################################
                 }
@@ -216,7 +220,7 @@ module iris(){
                 difference(){
                     intersection(){
                         translate([0,0,CENTER_HT+ 2]){
-                            sphere(r=RND_FACET_RAD + OUTER_WALL_TN,$fn=50);
+                            sphere(r=RND_FACET_RAD + OUTER_WALL_TN,$fn=100);
                         }
                         translate([0,0,-30]){
                             cylinder(h= RAD *2/3,r=RAD-(2*THK) +  OUTER_WALL_TN,$fn=6,center=true);
@@ -240,12 +244,44 @@ module iris(){
         
 
         // chop the bottom off cos it takes 6 days to print!!
-        translate([0,0,-10]){
+        translate([0,0,-8.2]){
             cube([250,250,50],center=true);
+        }
+
+        // riser : We want a 1mm cylindrical base to raise it inside the support
+        translate([0,0,-35.5]){
+            difference(){
+                cylinder(h=3, r=74);
+                cylinder(h=3.5, r= 69.5);
+            }
+        }
+
+    }
+    // 
+    // some support for the central spot
+    translate([0,-5,-50]){
+        rotate(45,[1,0,0]){
+            cylinder(h=6,r=2,center=true);
         }
     }
     // put a wee base under the chopped off bit
-    #translate([0,0,-35.5]){
-        cylinder(h=2,r=70);
+    translate([0,0,-33.7]){
+        cylinder(h=1,r=70);
+    }
+    // put a cylindrical skin around the riser
+    translate([0,0,-34.7]){
+        difference(){
+                cylinder(h=1, r=70);
+                cylinder(h=1.1, r= 69.5);
+        }
     }
 }
+//iris();
+//######################################################################
+// To print out the test ring for fitting into hex facet
+// difference(){
+//     iris();
+//     translate([0,0,-100]){
+//         cylinder(h=100, r=65);
+//     }
+// }
