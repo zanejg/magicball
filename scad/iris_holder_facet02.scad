@@ -306,95 +306,95 @@ module iris_holder_facet(){
 //#############################################################################
 // strap
 
-// AL_STRAP_COLOUR = [];
-// STRAP_ANGLE=11;
-// STRAP_CLIP_ANGLE=55;
-// STRAP_TN = 2.5;
-// strap_span_len = AL_WID*1.9;
-// hook_end_len = OUTER_WALL_TN *2.2;
-// hook_sz = HOLE_SZ-0.5 ;//* (4/5);
-// hook_rad = hook_sz/4 + OUTER_WALL_TN/4;
+AL_STRAP_COLOUR = [];
+STRAP_ANGLE=11;
+STRAP_CLIP_ANGLE=55;
+STRAP_TN = 2.5;
+strap_span_len = AL_WID*1.9;
+hook_end_len = OUTER_WALL_TN *2.2;
+hook_sz = HOLE_SZ - 1.0 ;//* (4/5);
+hook_rad = hook_sz/4 + OUTER_WALL_TN/4;
 
-// module curling_hook(){
-//     rotate(-90,[1,0,0]){
-//         union(){
-//             difference(){
-//                 rotate_extrude(angle=180){
-//                     translate([hook_rad,0,0]){
-//                         square(hook_sz);
-//                     }
-//                 }
-//                 translate([hook_rad* 2/10,-0.2 ,-0.1]){
-//                     cube([HOLE_SZ*1.3, OUTER_WALL_TN * 1, HOLE_SZ*1.1]);
-//                 }
-//             }
-//             translate([-(hook_sz + hook_rad),-hook_end_len,0]){
-//                 cube([hook_sz, hook_end_len, hook_sz]);
-//             }
-//         }
-//     }
-// }
+module curling_hook(){
+    rotate(-90,[1,0,0]){
+        union(){
+            difference(){
+                rotate_extrude(angle=180){
+                    translate([hook_rad,0,0]){
+                        square(hook_sz);
+                    }
+                }
+                translate([hook_rad* 2/10,-0.5 ,-0.1]){
+                    cube([HOLE_SZ*1.3, OUTER_WALL_TN * 1, HOLE_SZ*1.1]);
+                }
+            }
+            translate([-(hook_sz + hook_rad),-hook_end_len,0]){
+                cube([hook_sz, hook_end_len, hook_sz]);
+            }
+        }
+    }
+}
 
-// module al_strap(){
-//     difference(){
-//         // the two angled spanning flat lengths
-//         union(){
-//             translate([2,3,0]){
-//                 rotate(STRAP_ANGLE,[0,0,1]){
-//                     cube([strap_span_len,8,3],center=true);
-//                 }
-//             }
-//             translate([2,-3,0]){
-//                 rotate(-STRAP_ANGLE,[0,0,1]){
-//                     cube([strap_span_len,8,3],center=true);
-//                 }
-//             }
-//         }
-//         // the screw hole
-//         translate([-(AL_WID*(69/100)),0,-2]){
-//             cylinder(h=4,r=3.1/2);
-//         }
-//     }
+module al_strap(){
+    difference(){
+        // the two angled spanning flat lengths
+        union(){
+            translate([2,3,0]){
+                rotate(STRAP_ANGLE,[0,0,1]){
+                    cube([strap_span_len,8,3],center=true);
+                }
+            }
+            translate([2,-3,0]){
+                rotate(-STRAP_ANGLE,[0,0,1]){
+                    cube([strap_span_len,8,3],center=true);
+                }
+            }
+        }
+        // the screw hole
+        translate([-(AL_WID*(69/100)),0,-2]){
+            cylinder(h=4,r=3.1/2);
+        }
+    }
     
 
 
 
-//     // curling hook for strap
+    // curling hook for strap
     
-//     translate([hole_dist_from_center+hook_rad+hook_sz/2, HOLE_SZ/1.6 ,-OUTER_WALL_TN*1.5]){
-//         curling_hook();
-//     }
-//     translate([hole_dist_from_center+hook_rad+hook_sz/2, -HOLE_SZ/1.6 -hook_sz ,-OUTER_WALL_TN*1.5]){
-//         curling_hook();
-//     }
+    translate([hole_dist_from_center+hook_rad+hook_sz/2, HOLE_SZ/1.6 ,-OUTER_WALL_TN*1.5]){
+        curling_hook();
+    }
+    translate([hole_dist_from_center+hook_rad+hook_sz/2, -HOLE_SZ/1.6 -hook_sz ,-OUTER_WALL_TN*1.5]){
+        curling_hook();
+    }
 
 
-//     // // two kinked bits that go thru the hole
-//     // translate([AL_WID * 85/100+1.5,5.5,-2.49]){
-//     //     rotate(STRAP_CLIP_ANGLE,[0,1,0]){
-//     //         cube([THK * 3.5, HOLE_SZ * 4/5, STRAP_TN],center=true);
-//     //     }
-//     // }
-//     // translate([AL_WID * 85/100+1.5,-5.5,-2.49]){
-//     //     rotate(STRAP_CLIP_ANGLE,[0,1,0]){
-//     //         cube([THK * 3.5, HOLE_SZ * 4/5, STRAP_TN],center=true);
-//     //     }
-//     // }
+    // // two kinked bits that go thru the hole
+    // translate([AL_WID * 85/100+1.5,5.5,-2.49]){
+    //     rotate(STRAP_CLIP_ANGLE,[0,1,0]){
+    //         cube([THK * 3.5, HOLE_SZ * 4/5, STRAP_TN],center=true);
+    //     }
+    // }
+    // translate([AL_WID * 85/100+1.5,-5.5,-2.49]){
+    //     rotate(STRAP_CLIP_ANGLE,[0,1,0]){
+    //         cube([THK * 3.5, HOLE_SZ * 4/5, STRAP_TN],center=true);
+    //     }
+    // }
 
-//     // // hook/flat parts on the other side
-//     // translate([AL_WID * 85/100+5,5.5,-AL_TN - STRAP_TN]){
-//     //     cube([THK * 3, HOLE_SZ * 4/5, STRAP_TN],center=true);
-//     // }
-//     // translate([AL_WID * 85/100+5, -5.5, -AL_TN - STRAP_TN]){
-//     //     cube([THK * 3, HOLE_SZ * 4/5, STRAP_TN],center=true);
-//     // }
-// }
-// //#################################################################################
+    // // hook/flat parts on the other side
+    // translate([AL_WID * 85/100+5,5.5,-AL_TN - STRAP_TN]){
+    //     cube([THK * 3, HOLE_SZ * 4/5, STRAP_TN],center=true);
+    // }
+    // translate([AL_WID * 85/100+5, -5.5, -AL_TN - STRAP_TN]){
+    //     cube([THK * 3, HOLE_SZ * 4/5, STRAP_TN],center=true);
+    // }
+}
+//#################################################################################
 
 
-// translate([0,1.5 * hole_sep,STRAP_TN + (AL_TN-OUTER_WALL_TN)]){
-//     color("Wheat",1.0){al_strap();}
-// }
+translate([0,1.5 * hole_sep,STRAP_TN + (AL_TN-OUTER_WALL_TN)]){
+    color("Wheat",1.0){al_strap();}
+}
 
 
 // color("Lavender",1.0){
