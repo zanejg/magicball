@@ -1,0 +1,11 @@
+cd /home/zane/ball_run
+python boot_display.py
+
+
+## run the stuff
+/home/zane/ball_run/acc_sensor_server/run_stream &
+python main_loop.py &
+
+
+
+

@@ -35,15 +35,14 @@ EVENT_MAX_LEN = 120
 
 
 #threshhold = 0.5
-threshhold = 25000
-time_threshhold = 0.3
+threshhold = 15000
 # self.state = "flat"
 # self.state_set ={"flat","rising","rising_edge","lowering","lowering_edge"}
 # event_set = {"rising_edge","lowering_edge","peaked","troughed","hi_pulse","lo_pulse"}
 # last_val = 0
 
 
-event_handlers = {dm:event_finder(threshhold, time_threshhold) for dm in ['x','y','z']}
+event_handlers = {dm:event_finder(threshhold) for dm in ['x','y','z']}
 
 events = {dm:[] for dm in ['x','y','z']}
 
@@ -94,7 +93,7 @@ while(True):
             new_events = [ev for ev in event_handlers[dm].events
                         if ev['time'] > last_event_time]
             for ne in new_events:
-                #print(f"{dm} ||--|| {ne['event']} |-|gyro= {gyro_data[dm]}")
+                print(f"{dm} ||--|| {ne['event']} |-|gyro= {gyro_data[dm]}")
                 this_last_event_time = ne['time']
         
                 #ne['time']=ne['time'].isoformat(timespec='microseconds')

@@ -41,11 +41,14 @@ module top_battery_cup_vent(){
 TOP_BATT_HOLDER_LIP = 4.5;
 module top_battery_cup(){
     difference(){
-        // define the outer surface
-        rotate([0,90,0]){
-            scale([1.1,1.1,1.05]){
-                belkin_power_bank();
-            }
+        union(){
+            // define the outer surface
+            // rotate([0,90,0]){
+            //     scale([1.1,1.1,1.05]){
+            //         belkin_power_bank();
+            //     }
+            // }
+            batt_fins();
         }
         // define the inner
         translate([2,0,0]){
@@ -100,9 +103,9 @@ module top_battery_cup(){
                 }
             }
         }
-        translate([-15,-PCB_ARM_TN -0.3 ,-7.0]){
-            cube([30,PCB_ARM_TN * 1.1,PCB_ARM_WD]);
-        }
+        // translate([-15,-PCB_ARM_TN -0.3 ,-7.0]){
+        //     cube([30,PCB_ARM_TN * 1.1,PCB_ARM_WD]);
+        // }
     }
 }
 
@@ -121,5 +124,62 @@ module top_batt_tab(){
         }
     }
 }
+
+
+
+module batt_fins(){
+    angles = [
+        60,
+        40,
+        20,
+        0,
+        -20,
+        -40,
+        -60
+    ];
+    difference(){
+        union(){
+            translate([belkin_whole_len/2-5,18,-17]){ 
+                rotate([0,0,180]){
+                    for(ang=angles){
+                        rotate([0,0,ang]){
+                            translate([0,0,0]){
+                                cube([3,70,55],center=false);
+                            }
+                        } 
+                    }
+                }
+            }
+            translate([-14,-14,-17]){ 
+                cube([110,3,40],center=false);
+            }
+            translate([-14,-14,-17]){ 
+                cube([110,3,40],center=false);
+            }
+        }
+        translate([30,-38,0]){
+            cube([150,40,80],center=true);
+        }
+        translate([-30,-20,5]){
+            rotate([45,0,0]){
+                cube([150,60,40]);
+            } 
+        }
+    }
+    
+    
+
+    // translate([39,17,-17]){ 
+    //     cube([3,10,40],center=false);
+    // }
+
+}
+
+
+
+
+
+
+
 
 top_battery_cup();

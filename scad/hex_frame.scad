@@ -87,7 +87,7 @@ module screw_plate(){
         }
     }
 }
-translate([-FRAME_PLATE_LN/2,-90,WID*0.93]){
+!translate([-FRAME_PLATE_LN/2,-90,WID*0.93]){
     rotate([FACET_ANGLE+90,0,0]){
         screw_plate();
     }
@@ -791,7 +791,7 @@ module top_batt_holder(){
     
     translate([-43,0,75]){
         //$fn=100;
-        !top_battery_cup();
+        top_battery_cup();
     }
 
 
@@ -935,7 +935,7 @@ module bott_batt_holder(){
 }
 
 union(){
-    !top_batt_holder();
+    top_batt_holder();
     translate([-42,0,75]){
         bottom_battery_cup();
     }
@@ -1061,36 +1061,35 @@ translate([0,0,192]){
 //### PCBs NOT PRINTED
 //###########################################################
 
-// translate([12,29,50.5]){
-//     rotate([0,0,-90]){
-//         color("green",1.0){
-//             import("model_testing/raspy_i2c_conn_assy.stl");
-//         }
-//     }
-// }
+translate([12,29,50.5]){
+    rotate([0,0,-90]){
+        color("green",1.0){
+            import("model_testing/raspy_i2c_conn_assy.stl");
+        }
+    }
+}
 
 
-// translate([0,-38,80]){
-//     rotate([FACET_ANGLE,0,0]){
-//         translate([0,-18,0]){
-//             rotate([0,0,-90]){
-//                 color("green",1.0){
-//                     import("model_testing/PWM_array_assy02.stl");
-//                 }
-//             }
-//         }
-//     }
-// }
+translate([0,-38,80]){
+    rotate([FACET_ANGLE,0,0]){
+        translate([0,-18,0]){
+            rotate([0,0,-90]){
+                color("green",1.0){
+                    import("model_testing/PWM_array_assy02.stl");
+                }
+            }
+        }
+    }
+}
 
 
-
-// translate([12,-20,175]){
-//     rotate([0,0,0]){
-//         color("green",1.0){
-//             import("model_testing/HW040_rotary_sw.stl");
-//         }
-//     }
-// }
+translate([12,-20,175]){
+    rotate([0,0,0]){
+        color("yellow",1.0){
+            import("model_testing/HW040_rotary_sw.stl");
+        }
+    }
+}
 
 translate([0,0,WID - OUTER_WALL_TN*2]){
     import("iris_holder_facet03.stl");

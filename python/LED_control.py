@@ -194,13 +194,6 @@ class four_LED_driver(object):
         self.set_each_RGB(rgb_list)
             
             
-            
-        
-            
-            
-            
-        
-         
     def set_each_RGB(self,the_leds):
         """
         Takes a list of RGBs
@@ -213,13 +206,15 @@ class four_LED_driver(object):
 
 
 
+
+
 def create_full_dimming_sequence():
     """
     Create a sequence of 2048 coefficients to use for dimming a light in logarithmic seq.
     For creating apparent linear dimming for human eye.
     Returns a sequence of coeficients between zero and one that progresses downward 
     logarithmically where the steps become smaller as it approaches 0
-    To get a curve that seems appropriate we have used nat logs between 1 and 100
+    To get a curve that seems appropriate I have used nat logs between 1 and 100
     """
     
     # first get a sequnece of 2048 floats bet 1 and 128
@@ -255,7 +250,7 @@ def rgb_to_ints(rgb):
 
 
 
-def get_colour_dimming_sequence(rgbstr):
+def get_colour_dimming_sequence(rgbstr, stepnum=64 ):
     """
     Will return a list of 64 steps of dimming or brightening 
     a specific RGB colour along with the position in the sequence that
@@ -290,8 +285,8 @@ def get_colour_dimming_sequence(rgbstr):
     dim_seq_len = len(full_dimming_seq)
     # we want a relatively big step for our rotary switch control
     # so we will split the seq up into 64
-    stepnum = 64
-    step_size = int(dim_seq_len/(stepnum-1)) # we will only calc 1st 63
+    #stepnum = 64
+    step_size = int(dim_seq_len/(stepnum-1)) # we will only calc 1st stepnum-1
     stepped_dimming_seq = [full_dimming_seq[i] for i in range(0,dim_seq_len,step_size)]
     # then ensure 1.0 is on the end
     stepped_dimming_seq.append(1.0)
@@ -301,7 +296,7 @@ def get_colour_dimming_sequence(rgbstr):
             break
     position = posi
     # we need the ratios of the colours to stay the same over the range
-    # so we will store the ration of the lesser ones to the max value
+    # so we will store the ratio of the lesser ones to the max value
     lesser_ratios = {col:(val/max_level if max_level else 0) for col,val in lesser_levels.items()}
     
     # now we can build the sequence as 3 lists of values keyed by colour

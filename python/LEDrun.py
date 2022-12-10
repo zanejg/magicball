@@ -31,7 +31,6 @@ from hardware import channels
 # ]
 
 
-
 fld = LC.four_LED_driver(channels)
 
 
@@ -94,7 +93,7 @@ if __name__ == "__main__":
                                     direction="up"
                             
                                 
-                            time.sleep(0.005)
+                            time.sleep(0.001)
                         
                     else:
                         print("Pulse needs a colour")
@@ -107,7 +106,7 @@ if __name__ == "__main__":
                             ledcol[col] = random.randrange(0,255)/255.0
                         the_leds.append(ledcol)
                     fld.set_each(the_leds)
-                    time.sleep(0.1)
+                    time.sleep(0.2)
                     
                     
                     

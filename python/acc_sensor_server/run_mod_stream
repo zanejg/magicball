@@ -1,0 +1,8 @@
+#!/bin/bash
+killall memcached
+memcached &
+cd /home/zane/pyremote/acc_sensor_server/
+python ez_sensor_stream.py
+
+
+

@@ -61,7 +61,7 @@ class PWM:
         
         self._writeByte(self._base_adr_low + 4 * channel, data & 0xFF)
         self._writeByte(self._base_adr_high + 4 * channel, data >> 8)
-        time.sleep(0.005)
+        time.sleep(0.001)
 
     def _writeByte(self, reg, value):
         try:

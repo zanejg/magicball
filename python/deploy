@@ -1,0 +1,46 @@
+#!/bin/bash
+# copy the salient files to the local directory
+srcdir=/home/zane/pyremote
+accsrcdir=/home/zane/pyremote/acc_sensor_server
+
+destdir=/home/zane/ball_run
+destaccdir=/home/zane/ball_run/acc_sensor_server
+
+# dir names to replace in scripts
+devdir="pyremote"
+rundir="ball_run"
+
+# copy the boot script to home/zane
+cp $srcdir/run_boot.bsh /home/zane/
+
+
+
+# the main python scripts
+cp $srcdir/boot_display.py $destdir
+cp $srcdir/LED_control.py $destdir
+cp $srcdir/PCA9685.py $destdir
+cp $srcdir/hardware.py $destdir
+cp $srcdir/main_loop.py $destdir
+cp $srcdir/rotary.py $destdir
+cp $srcdir/encoder.py $destdir
+cp $srcdir/LEDrun.py $destdir
+cp $srcdir/display_modes.py $destdir
+#cp $srcdir/ $destdir
+
+#cp $srcdir/ $destdir
+
+# the accellerometer data stream stuff
+cp $accsrcdir/run_stream $destaccdir
+cp $accsrcdir/sensor_stream.py $destaccdir
+cp $accsrcdir/accel.py $destaccdir
+cp $accsrcdir/event_finder.py $destaccdir
+# cp $destaccdir/ $destaccdir
+# cp $destaccdir/ $destaccdir
+# cp $destaccdir/ $destaccdir
+
+
+# replace directories for bash scripts
+sedcom='s/'$devdir'/'$rundir'/'
+echo $sedcom
+sed -i "$sedcom" $destaccdir/run_stream
+
