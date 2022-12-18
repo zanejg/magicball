@@ -17,35 +17,29 @@ module m3_countersink(){
     cylinder(h=CS_HT, r1 = CS_MIN_RAD,r2=cs_max_rad );
 }
 
+
+module corner_trimmer(){
+    difference() {
+        cube([5,5,FRAME_PLATE_TN*1.1],center=true);
+        translate([2.5,2.5,-2]){
+            cylinder(r=4,h=FRAME_PLATE_TN*1.5);
+        }
+    }
+}
+//corner_trimmer();
+
 module screw_plate(){
     difference(){
         union(){
             cube([FRAME_PLATE_LN, cs_plate_wid, FRAME_PLATE_TN]);
-            // RAIL
-            translate([0,cs_plate_wid,RAIL_RD ]){
-                hull(){
-                    sphere(r=RAIL_RD);
-                    translate([FRAME_PLATE_LN,0,0]){
-                        sphere(r=RAIL_RD);
-                    } 
-                }
-            }
-
+            
 
             translate([0,cos(90-FACET_ANGLE) * FRAME_PLATE_TN,tan(90-FACET_ANGLE)*FRAME_PLATE_TN]){
                 rotate([180 - FACET_ANGLE,0,0]){
                     difference(){
                         union(){
                             cube([FRAME_PLATE_LN, cs_plate_wid, FRAME_PLATE_TN]);
-                            // RAIL
-                            translate([0,cs_plate_wid,FRAME_PLATE_TN-RAIL_RD ]){
-                                hull(){
-                                    sphere(r=RAIL_RD);
-                                    translate([FRAME_PLATE_LN,0,0]){
-                                        sphere(r=RAIL_RD);
-                                    } 
-                                }
-                            }
+                            
                         }
                         // screwholes on upright side
                         translate([FRAME_PLATE_LN-(FRAME_PLATE_LN/2 - 25),10 + OUTER_WALL_TN * 0.75,-1]){
@@ -64,6 +58,19 @@ module screw_plate(){
                                 }
                             }
                         }
+                        // trim the corners
+                        translate([1.5,cs_plate_wid-1.5,1.5]){ 
+                            rotate([0,0,270]){
+                                corner_trimmer();
+                            }
+                        }
+                        // trim the corners
+                        translate([FRAME_PLATE_LN-1.5,cs_plate_wid-1.5,1.5]){ 
+                            rotate([0,0,180]){
+                                corner_trimmer();
+                            }
+                        }
+
                     }
                 }
             }
@@ -81,6 +88,18 @@ module screw_plate(){
                 m3_countersink();
             }
         }
+        // trim the corners
+        translate([1.5,cs_plate_wid - 1.5,1.5]){ 
+            rotate([0,0,-90]){
+                corner_trimmer();
+            }
+        }
+        // trim the corners
+        translate([FRAME_PLATE_LN-1.5,cs_plate_wid - 1.5,1.5]){ 
+            rotate([0,0,180]){
+                corner_trimmer();
+            }
+        }
     }
 
     translate([0,2,2.5]){ 
@@ -93,73 +112,51 @@ module screw_plate(){
             }
         }
     }
-
-
-
 }
-
-NOODLE_RD =2.5;
-CURVE_RD=20;
-NOODLE_ANG=93;
-RAIL_RD=3;
-RIB_RD = 0.5;
-
-noodle_y_offset = CURVE_RD - 
-                    (cs_plate_wid * sin(90 - FACET_ANGLE))+
-                    NOODLE_RD - 0.2;
-
-//translate([NOODLE_RD,16.2,22.5]){
-
-
-noodle_xposis = [
-    NOODLE_RD,
-    NOODLE_RD + 8,
-    NOODLE_RD + 16,
-    FRAME_PLATE_LN/2 - 18,
-    FRAME_PLATE_LN/2 - 10,
-    FRAME_PLATE_LN/2,
-    FRAME_PLATE_LN/2 + 10,
-    FRAME_PLATE_LN/2 + 18,
-    FRAME_PLATE_LN - NOODLE_RD -16,
-    FRAME_PLATE_LN - NOODLE_RD -8,
-    FRAME_PLATE_LN - NOODLE_RD
-];
-
-for(posi = noodle_xposis){
-    translate([posi,
-                noodle_y_offset,
-                CURVE_RD + RAIL_RD -0]){
-        // making it symmetrical about the two sides
-        rotate([-83 ,0,0]){
-            rotate([0,90,0]){
-                union(){
-                    // NOODLE
-                    rotate_extrude(angle=NOODLE_ANG){
-                        translate([CURVE_RD,0,0]){ 
-                            circle(r=NOODLE_RD);
-                        }
-                    }
-                    // RIBS
-                    for(ang = [-15:-10:-(NOODLE_ANG -10)]){
-                        rotate([0,0,ang]){ 
-                            translate([0,CURVE_RD,0]){ 
-                                rotate([0,90,0]){
-                                    rotate_extrude(angle=360){
-                                        translate([NOODLE_RD,0,0]){
-                                            circle(r = RIB_RD);
-                                        } 
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                } 
-            }
-        }
-    }
-}
-
-
-
 screw_plate();
+
+
+// // veins
+// translate([FRAME_PLATE_LN -5 ,cs_plate_wid -5 ,FRAME_PLATE_TN-1]){ 
+//     rotate([90,0,0]){
+//         rotate_extrude(angle=90) {
+//             translate([2,0,0]){
+//                 circle(r = 1.5);
+//             } 
+//         }
+//     }
+// }
+
+// translate([FRAME_PLATE_LN -5 ,cs_plate_wid -20 ,FRAME_PLATE_TN + 1]){ 
+//     rotate([0,0,90]){
+//         rotate_extrude(angle=45) {
+//             translate([15,0,0]){
+//                 circle(r = 1.5);
+//             } 
+//         }
+//     }
+// }
+
+// translate([FRAME_PLATE_LN -28 ,cs_plate_wid - 3  ,FRAME_PLATE_TN + 6]){ 
+//     rotate([-20,0,-105]){
+//         rotate_extrude(angle=80) {
+//             translate([15,0,0]){
+//                 circle(r = 1.5);
+//             } 
+//         }
+//     }
+// }
+
+
+// translate([FRAME_PLATE_LN/2 + 4.8 ,2*cs_plate_wid +36  ,-5]){ 
+//     rotate([10,-5,-124]){
+//         rotate_extrude(angle=45) {
+//             translate([75,0,0]){
+//                 circle(r = 1.5);
+//             } 
+//         }
+//     }
+// }
+
+
+

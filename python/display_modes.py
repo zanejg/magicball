@@ -10,6 +10,7 @@ import RPi.GPIO as GPIO
 
 import LED_control as LC
 from hardware import channels
+import hardware as hw
 
 
 GPIO.setmode(GPIO.BCM)
@@ -20,17 +21,17 @@ GPIO.setup(BLUE_BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 GPIO.setup(WHITE_BUTTON_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
-def check_for_pressed_buttons():
-    if GPIO.input(WHITE_BUTTON_PIN) == GPIO.HIGH:
-        while GPIO.input(WHITE_BUTTON_PIN) == GPIO.HIGH:
-            time.sleep(0.1)
-        return "WHITE"
-    elif GPIO.input(BLUE_BUTTON_PIN) == GPIO.HIGH:
-        while GPIO.input(BLUE_BUTTON_PIN) == GPIO.HIGH:
-            time.sleep(0.1)
-        return "BLUE"
-    else:
-        return None
+# def check_for_pressed_buttons():
+#     if GPIO.input(WHITE_BUTTON_PIN) == GPIO.HIGH:
+#         while GPIO.input(WHITE_BUTTON_PIN) == GPIO.HIGH:
+#             time.sleep(0.1)
+#         return "WHITE"
+#     elif GPIO.input(BLUE_BUTTON_PIN) == GPIO.HIGH:
+#         while GPIO.input(BLUE_BUTTON_PIN) == GPIO.HIGH:
+#             time.sleep(0.1)
+#         return "BLUE"
+#     else:
+#         return None
 
 
 ######################################################################################
@@ -179,7 +180,7 @@ def pulse():
                 "GREEN":seq['GREEN'][throbposi],
                 "BLUE":seq['BLUE'][throbposi],
             })
-            button_pressed = check_for_pressed_buttons()
+            button_pressed = hw.check_for_pressed_buttons()
             if button_pressed is not None:
                 return
             
@@ -219,7 +220,7 @@ def sparkle():
             #import pdb;pdb.set_trace()
             fld.set_each(these_levels)
             
-            button_pressed = check_for_pressed_buttons()
+            button_pressed = hw.check_for_pressed_buttons()
             if button_pressed is not None:
                 return
 
@@ -240,7 +241,7 @@ def slow():
         # now step thru seq setting the colours as we go
         for this_col in seq:
             fld.all_same_float(this_col)
-            button_pressed = check_for_pressed_buttons()
+            button_pressed = hw.check_for_pressed_buttons()
             if button_pressed is not None:
                 return
 
@@ -262,7 +263,7 @@ def rand():
             the_leds.append(ledcol)
         fld.set_each(the_leds)
         
-        button_pressed = check_for_pressed_buttons()
+        button_pressed = hw.check_for_pressed_buttons()
         if button_pressed is not None:
             return
 

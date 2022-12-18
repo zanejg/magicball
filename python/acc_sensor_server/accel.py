@@ -39,26 +39,26 @@ class accelerometer(object):
     def dist(self, a,b):
         return math.sqrt((a*a)+(b*b))
     
-    def get_y_rotation(self, x,y,z):
-        radians = math.atan2(x, dist(y,z))
-        return -math.degrees(radians)
+    # def get_y_rotation(self, x,y,z):
+    #     radians = math.atan2(x, dist(y,z))
+    #     return -math.degrees(radians)
     
-    def get_x_rotation(self, x,y,z):
-        radians = math.atan2(y, dist(x,z))
-        return math.degrees(radians)
+    # def get_x_rotation(self, x,y,z):
+    #     radians = math.atan2(y, dist(x,z))
+    #     return math.degrees(radians)
 
-    def get_z_rotation(self, x,y,z):
-        radians = math.atan2(z, dist(x,y))
-        return math.degrees(radians)
+    # def get_z_rotation(self, x,y,z):
+    #     radians = math.atan2(z, dist(x,y))
+    #     return math.degrees(radians)
     
-    def get_rot(self):
-        acc = self.get_accel()
+    # def get_rot(self):
+    #     acc = self.get_accel()
         
-        return {
-            'x': get_x_rotation(acc['x'], acc['y'], acc['z']),
-            'y': get_y_rotation(acc['x'], acc['y'], acc['z']),
-            'z': get_z_rotation(acc['x'], acc['y'], acc['z']),
-        }
+    #     return {
+    #         'x': get_x_rotation(acc['x'], acc['y'], acc['z']),
+    #         'y': get_y_rotation(acc['x'], acc['y'], acc['z']),
+    #         'z': get_z_rotation(acc['x'], acc['y'], acc['z']),
+    #     }
     
     
     def get_accel(self):
@@ -70,9 +70,9 @@ class accelerometer(object):
         acceleration_zout = self.read_word_2c(0x3f)
             
         return {
-            'x': acceleration_xout / 16384.0,
-            'y': acceleration_yout / 16384.0,
-            'z': acceleration_zout / 16384.0,
+            'x': acceleration_xout ,
+            'y': acceleration_yout ,
+            'z': acceleration_zout ,
             }
         
     def get_gyro(self):

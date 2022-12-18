@@ -38,8 +38,8 @@ def create_app(test_config=None):
         return render_template('rolling_graph.html')
     @app.route('/getdata/')
     def getdata():
-        #return json.dumps(acc.get_accel())
-        return json.dumps(acc.get_gyro())
+        return json.dumps(acc.get_accel())
+        #return json.dumps(acc.get_gyro())
 
     return app
 

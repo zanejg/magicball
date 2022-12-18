@@ -25,6 +25,7 @@ cp $srcdir/rotary.py $destdir
 cp $srcdir/encoder.py $destdir
 cp $srcdir/LEDrun.py $destdir
 cp $srcdir/display_modes.py $destdir
+cp $srcdir/sensor_modes.py $destdir
 #cp $srcdir/ $destdir
 
 #cp $srcdir/ $destdir
@@ -33,7 +34,8 @@ cp $srcdir/display_modes.py $destdir
 cp $accsrcdir/run_stream $destaccdir
 cp $accsrcdir/sensor_stream.py $destaccdir
 cp $accsrcdir/accel.py $destaccdir
-cp $accsrcdir/event_finder.py $destaccdir
+cp $accsrcdir/gyro_event_finder.py $destaccdir
+cp $accsrcdir/accel_event_finder.py $destaccdir
 # cp $destaccdir/ $destaccdir
 # cp $destaccdir/ $destaccdir
 # cp $destaccdir/ $destaccdir

@@ -68,11 +68,13 @@ class accelerometer(object):
         acceleration_xout = self.read_word_2c(0x3b)
         acceleration_yout = self.read_word_2c(0x3d)
         acceleration_zout = self.read_word_2c(0x3f)
+        #denom = 16384.0
+        denom = 1
             
         return {
-            'x': acceleration_xout / 16384.0,
-            'y': acceleration_yout / 16384.0,
-            'z': acceleration_zout / 16384.0,
+            'x': acceleration_xout / denom,
+            'y': acceleration_yout / denom,
+            'z': acceleration_zout / denom,
             }
     
     def get_gyro(self):
