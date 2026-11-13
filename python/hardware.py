@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import time
+from pymemcache.client import base
+memcacheclient = base.Client(('localhost', 11211))
 
 channels = [
 {
@@ -43,10 +45,12 @@ def check_for_pressed_buttons():
     the colour if it has
     """
     if GPIO.input(WHITE_BUTTON_PIN) == GPIO.HIGH:
+        memcacheclient.set("lamp_control", "ball")
         while GPIO.input(WHITE_BUTTON_PIN) == GPIO.HIGH:
             time.sleep(0.1)
         return "WHITE"
     elif GPIO.input(BLUE_BUTTON_PIN) == GPIO.HIGH:
+        memcacheclient.set("lamp_control", "ball")
         while GPIO.input(BLUE_BUTTON_PIN) == GPIO.HIGH:
             time.sleep(0.1)
         return "BLUE"
@@ -57,12 +61,14 @@ def check_for_pressed_buttons():
 def rota_switch_pressed():
     global lighted_state
     print("pressed")
+    memcacheclient.set("lamp_control", "ball")
     while rotasw.get_switch() == "pressed":
         time.sleep(0.1)
     lighted_state = not(lighted_state)
     print("released")
 
 def button_pressed(button_pin):
+    memcacheclient.set("lamp_control", "ball")
     while GPIO.input(button_pin) == GPIO.HIGH:
         time.sleep(0.1)
     

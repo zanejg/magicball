@@ -87,7 +87,7 @@ module screw_plate(){
         }
     }
 }
-!translate([-FRAME_PLATE_LN/2,-90,WID*0.93]){
+translate([-FRAME_PLATE_LN/2,-90,WID*0.93]){
     rotate([FACET_ANGLE+90,0,0]){
         screw_plate();
     }

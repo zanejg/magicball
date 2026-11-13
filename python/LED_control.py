@@ -198,10 +198,12 @@ class four_LED_driver(object):
         """
         Takes a list of RGBs
         Will also create the dimming sequences for each and
-        set them up
+        set them up.
+        If an entry is None it will skip it.
         """
         for lednum,this_RGB in enumerate(the_leds):
-            self.LEDs[lednum].light_with_RGB(this_RGB)
+            if this_RGB is not None:
+                self.LEDs[lednum].light_with_RGB(this_RGB)
             
 
 

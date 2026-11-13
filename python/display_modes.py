@@ -11,7 +11,8 @@ import RPi.GPIO as GPIO
 import LED_control as LC
 from hardware import channels
 import hardware as hw
-
+from pymemcache.client import base
+memcacheclient = base.Client(('localhost', 11211))
 
 GPIO.setmode(GPIO.BCM)
 # but we will have to detect button presses to escape out
@@ -146,11 +147,15 @@ def main_display_loop():
     ]
 
     while(True):
+        if(memcacheclient.get("lamp_control") != b'ball'):
+            return
         # run the current display mode
         modes[display_mode]()
         if button_pressed == "WHITE":
+            memcacheclient.set("lamp_control", "ball")
             return
         if button_pressed == "BLUE":
+            memcacheclient.set("lamp_control", "ball")
             button_pressed = None
             if display_mode < (len(modes)-1):
                 display_mode+=1 
@@ -175,6 +180,8 @@ def pulse():
         seq = seqdata['sequences']
 
         for throbposi in throbseq:
+            if(memcacheclient.get("lamp_control") != b'ball'):
+                return
             fld.all_same_float({
                 "RED":seq['RED'][throbposi],
                 "GREEN":seq['GREEN'][throbposi],
@@ -192,6 +199,7 @@ def sparkle():
     numsteps = 12
 
     while(True):
+        
         # create a dict of sequences keyed by LED num
         all_dim_seqs = {}
         all_sparkle_seqs = {}
@@ -207,6 +215,8 @@ def sparkle():
         # iterate thru sequence creating the data for setting 
         # each LED independently
         for throbposi in range(0,numsteps):
+            if(memcacheclient.get("lamp_control") != b'ball'):
+                return
             these_levels = []
             for this_led in range(0,4):
                 this_led_seq = all_dim_seqs[this_led]
@@ -240,6 +250,8 @@ def slow():
         #import pdb;pdb.set_trace()
         # now step thru seq setting the colours as we go
         for this_col in seq:
+            if(memcacheclient.get("lamp_control") != b'ball'):
+                return
             fld.all_same_float(this_col)
             button_pressed = hw.check_for_pressed_buttons()
             if button_pressed is not None:
@@ -256,6 +268,8 @@ def rand():
 
     while(True):
         the_leds = []
+        if(memcacheclient.get("lamp_control") != b'ball'):
+                return
         for led in range(0,4):
             ledcol = {}
             for col in ["RED","GREEN","BLUE"]:

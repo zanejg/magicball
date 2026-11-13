@@ -276,7 +276,12 @@ module iris(){
         }
     }
 }
-//iris();
+difference(){
+    iris();
+    translate([0, 0, -70]){
+        cube([250, 250, 50], center=true);
+    }
+}
 //######################################################################
 // To print out the test ring for fitting into hex facet
 // difference(){

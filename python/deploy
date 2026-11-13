@@ -2,9 +2,12 @@
 # copy the salient files to the local directory
 srcdir=/home/zane/pyremote
 accsrcdir=/home/zane/pyremote/acc_sensor_server
+websrcdir=/home/zane/pyremote/webgraph
 
 destdir=/home/zane/ball_run
 destaccdir=/home/zane/ball_run/acc_sensor_server
+destwebdir=/home/zane/ball_run/webgraph
+
 
 # dir names to replace in scripts
 devdir="pyremote"
@@ -39,6 +42,16 @@ cp $accsrcdir/accel_event_finder.py $destaccdir
 # cp $destaccdir/ $destaccdir
 # cp $destaccdir/ $destaccdir
 # cp $destaccdir/ $destaccdir
+
+# web UI stuff
+cp $websrcdir/app/accel.py $destwebdir/app
+cp $websrcdir/app/__init__.py $destwebdir/app
+cp $websrcdir/app/templates/colour_chooser.html $destwebdir/app/templates/
+cp $websrcdir/app/templates/rolling_graph.html $destwebdir/app/templates/
+
+cp $srcdir/run_web.bsh $destdir
+
+
 
 
 # replace directories for bash scripts

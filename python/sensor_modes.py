@@ -12,7 +12,7 @@ RED = "FF0000"
 GREEN = "00FF00"
 BLUE = "0000FF"
 
-client = base.Client(('localhost', 11211))
+memcacheclient = base.Client(('localhost', 11211))
 
 # when we enter the ball twist mode we want to signal this with a 
 # swirling pattern around the top 3 LEDs
@@ -25,7 +25,7 @@ ball_twist_seq = [
     [OFF,  OFF   ,BLUE , OFF],
 ]
 
-
+button_pressed=None
 
 rotasw = None
 lighted_state = False
@@ -48,20 +48,31 @@ def main_sensor_loop(leds,rotasw_parm):
     ]
     while True:
         # run the current display mode
+        #button_pressed = hw.check_for_pressed_buttons()
+        if(memcacheclient.get("lamp_control") != b'ball'):
+            print(f"MAIN SENSOR: detected non ball control:{memcacheclient.get('lamp_control')}")
+            return
         sensor_loops[display_mode](leds)
         if button_pressed == "WHITE":
+            memcacheclient.set("lamp_control", "ball")
+            print("sensor white")
+            button_pressed = None
             return
         if button_pressed == "BLUE":
+            memcacheclient.set("lamp_control", "ball")
             button_pressed = None
+            print("sensor blue")
             if display_mode < (len(sensor_loops)-1):
                 display_mode+=1 
             else:
                 display_mode = 0
+            
 
 
 
 
 def mainvalueChanged(self,value, direction,LEDs):
+    memcacheclient.set("lamp_control", "ball")
     if direction == "R":
         [this_led.brighten(4) for this_led in LEDs]
     elif direction == "L":
@@ -89,6 +100,8 @@ def ball_twist_mode(leds):
 
 
     # start with a lighting pattern
+    print("Entered ball twist mode")
+    print(f"Control flag:{memcacheclient.get('lamp_control')}")
     for pattern in ball_twist_seq:
         leds.set_each_RGB(pattern)
         time.sleep(0.2)
@@ -100,8 +113,13 @@ def ball_twist_mode(leds):
         """
         Event loop 
         """
+        if(memcacheclient.get("lamp_control") != b'ball'):
+            print(f"detected non ball control:{memcacheclient.get('lamp_control')}")
+            return
         if rotasw.get_switch() == "pressed":
+            memcacheclient.set("lamp_control", "ball")
             hw.rota_switch_pressed()
+
 
         # if hw.GPIO.input(hw.WHITE_BUTTON_PIN) == hw.GPIO.HIGH:
         #     print("White Button was pushed!")
@@ -124,7 +142,7 @@ def ball_twist_mode(leds):
             
         # pull out the last 10 events from memcached
         #import pdb;pdb.set_trace()
-        current_event = client.get("current_event")
+        current_event = memcacheclient.get("current_event")
         if current_event:
             #print(f"event detected:|{current_event}|")
             current_event_num = int(current_event)
@@ -135,7 +153,7 @@ def ball_twist_mode(leds):
             last_ten = []
             
             for cc in range(ten_start,current_event_num+1):
-                last_ten.append(client.get(f"ev{cc}"))
+                last_ten.append(memcacheclient.get(f"ev{cc}"))
             print(f"@@@@@@@@@@@LAST TEN @@@@\n{last_ten}\n@@@@@@")
             #import pdb;pdb.set_trace()
             for evstr in last_ten:
@@ -198,6 +216,10 @@ def ball_bump_mode(leds):
         #     time.sleep(0.3)
         #     leds.all_same_RGB("000000")
         #     return
+        
+        if(memcacheclient.get("lamp_control") != b'ball'):
+            return
+        
         button_pressed = hw.check_for_pressed_buttons()
         if button_pressed is not None:
             return
@@ -205,7 +227,7 @@ def ball_bump_mode(leds):
         
         # pull out the last 10 events from memcached
         #import pdb;pdb.set_trace()
-        current_event = client.get("current_acc_event")
+        current_event = memcacheclient.get("current_acc_event")
         # ignoring the "aev" get the number of the current event
         current_event_num = int(current_event[3:])
 
@@ -221,7 +243,7 @@ def ball_bump_mode(leds):
             # now go and collect them from memcached 
             # and put them into an array:last_ten
             for cc in range(ten_start,current_event_num+1):
-                last_ten.append(client.get(f"aev{cc}"))
+                last_ten.append(memcacheclient.get(f"aev{cc}"))
             
             # set a new event flag to false
             some_new_events = False
